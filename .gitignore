@@ -1,4 +1,6 @@
 *.mp3
-./temp_audioclip/
+*.log
+out.txt
 config.json
+./temp_audioclip/
 .vscode/
