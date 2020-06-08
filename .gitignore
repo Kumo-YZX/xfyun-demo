@@ -1,6 +1,10 @@
 *.mp3
+*.m4a
+*.wmv
+*.flac
 *.log
 out.txt
 config.json
 ./temp_audioclip/
 .vscode/
+./export/

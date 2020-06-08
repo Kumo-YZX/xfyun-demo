@@ -200,7 +200,7 @@ def main():
     if (len(sys.argv) > 1):
         file_name = sys.argv[1] 
     else:
-        file_name = "./0.mp3"
+        file_name = "0.mp3"
     myxf = xfdemo(file_name)
     myxf.loadConfig()
     myxf.preCheck()
@@ -219,7 +219,7 @@ def main():
 
     final_text = str(myxf.getFinalResult())
     stg_log(f"final result {final_text}")
-    with open("out.txt", 'a') as fo:
+    with open(f"out_{file_name}.txt", 'a') as fo:
         fo.write(final_text)
 
 
