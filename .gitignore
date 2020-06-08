@@ -1,6 +1,12 @@
 *.mp3
+*.m4a
+*.wmv
+*.flac
 *.log
+*.txt
 out.txt
 config.json
-./temp_audioclip/
+temp_audioclip/
+export/
 .vscode/
+__pycache__
