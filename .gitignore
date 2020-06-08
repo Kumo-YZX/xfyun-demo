@@ -3,8 +3,10 @@
 *.wmv
 *.flac
 *.log
+*.txt
 out.txt
 config.json
-./temp_audioclip/
+temp_audioclip/
+export/
 .vscode/
-./export/
+__pycache__
