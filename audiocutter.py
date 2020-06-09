@@ -4,7 +4,13 @@
 
 size10m = 10*1024*1024
 
-class xfdemo(object):
+def write_offset(offsetnum, fileprefix):
+    print(offsetnum)
+    with open(f"{fileprefix}.offset.txt", "a") as fo:
+        fo.write(str(offsetnum) + '\n')
+    return 0
+
+class audiocutter(object):
 
     def __init__(self, audio_file_name):
         self.__info = "zero"
@@ -46,13 +52,13 @@ class xfdemo(object):
         audio_time_length = audio_obj.duration_seconds*1000
         # audio_clip = []
         for clip_index in range(0, self.__slice_num):
-            print(int(audio_time_length*((clip_index)/self.__slice_num)))
-            print(int(audio_time_length*((clip_index+1)/self.__slice_num)))
-            print('-')
+            write_offset(int(audio_time_length*((clip_index)/self.__slice_num)), self.__file_name)
+            write_offset(int(audio_time_length*((clip_index+1)/self.__slice_num)), self.__file_name)
+            print('---- ----')
             current_clip = audio_obj[int(audio_time_length*((clip_index)/self.__slice_num)): int(audio_time_length*((clip_index+1)/self.__slice_num))]
-            self.checkTempdir()
+            self.checkTempdir("temp_audioclip")
             self.checkTempdir("export")
-            current_clip.export(f"./export/{self.__audio_prefix}.{str(clip_index)}.{self.__export_subfix}", format=self.__export_subfix, bitrate=self.__bitrate)
+            current_clip.export(f"./temp_audioclip/{self.__audio_prefix}.{str(clip_index)}.{self.__export_subfix}", format=self.__export_subfix, bitrate=self.__bitrate)
         return 0
 
 def main():
@@ -61,7 +67,7 @@ def main():
         file_name = sys.argv[1] 
     else:
         file_name = "example.m4a"
-    myxf = xfdemo(file_name)
+    myxf = audiocutter(file_name)
     myxf.audioPreTreat()
 
 if __name__ == "__main__":

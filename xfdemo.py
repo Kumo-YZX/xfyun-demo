@@ -51,13 +51,14 @@ class SliceIdGenerator:
 
 class xfdemo(object):
 
-    def __init__(self, audio_file_name):
+    def __init__(self, audio_file_name, time_offset=0):
         from pathlib import PurePath
         self.__file_path = audio_file_name
         pathobj = PurePath(self.__file_path)
         self.__file_name = pathobj.parts[-1]
         self.__file_size = 0
         self.__slice_num = 1
+        self.__time_offset = time_offset
         self.__keywords = ""
         stg_log(f"xfdemo loaded with filename: {self.__file_name}")
 
@@ -261,7 +262,8 @@ class xfdemo(object):
                 sentence_list = text_json
             for every_sentence in sentence_list:
                 es_gbk = every_sentence["onebest"]
-                es_timetag = lrc_time_conveter(int(every_sentence["bg"]))
+                correct_time = int(every_sentence["bg"]) + self.__time_offset
+                es_timetag = lrc_time_conveter(correct_time)
                 fo.write(f"[{es_timetag}]{es_gbk}\n")
         stg_log(f"write to lrc file done")
         return 0
@@ -291,6 +293,14 @@ def loadArgs():
         type=str,
         help="Do you want to use keywords? n:No, y:Yes"
     )
+    # start time of the audio part, in ms
+    parser.add_argument(
+        '-s',
+        '--starttime',
+        default='0',
+        type=str,
+        help="Time offset, in ms"
+    )
     return parser
 
 def main():
@@ -298,7 +308,17 @@ def main():
     import time
     args = loadArgs().parse_args()
 
-    myxf = xfdemo(args.filename)
+    # read start time and handle error
+    time_offset = 0
+    try:
+        time_offset = int(args.starttime)
+    except ValueError as e:
+        stg_log(f"time offset type error")
+        stg_log(f"{str(e)}")
+    finally:
+        stg_log(f"time offset: {str(time_offset)}")
+
+    myxf = xfdemo(args.filename, time_offset)
     # myxf.checkTempdir("temp_audioclip")
     myxf.checkTempdir("export")
     myxf.loadConfig()
