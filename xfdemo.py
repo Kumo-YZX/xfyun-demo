@@ -200,6 +200,9 @@ class xfdemo(object):
         except TimeoutError as e:
             stg_log(f"reqStatus timeout error occured")
             stg_log(f"{str(e)}")
+        except TypeError as e2:
+            stg_log(f"reqStatus type error occured")
+            stg_log(f"{str(e2)}")
         finally:
             pass
         return 1
