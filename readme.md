@@ -6,13 +6,15 @@
 
 ### Step 1: Download the code and install requirements
 
+we recommand to use virtualenv
+
 ```
 me@host:~$ git clone https://github.com/Kumo-YZX/xfyun-demo.git
 me@host:~$ pip install -r requirements.txt
 ```
-### Step 2: Prepare config.json
+### Step 2: Prepare for config.json
 
-should be placed behind xfdemo.py
+should be placed under main dir
 
 content like this
 ```
@@ -22,35 +24,59 @@ content like this
 }
 ``` 
 
-### Step 3: Prepare keyword list (Only required in keyword model)
+### Step 3: Prepare for keyword list (Only required in keyword model)
 
-should be placed behind xfdemo.py
+should be placed under main dir and be named with keywords.txt
 
-only one words for each line
+only one word for each line
 ```
 keyword1
 keyword2
 ...
 ```
 
-### Step 4: Prepare your audio file
+### Step 4: Prepare for your audio file
 
-mp3 and flac format have already been tested.
+mp3 & m4a & wmv & flac format are supported.
 
 After finishing step 2 and 3, your dir will be like this:
 ```
 xfyun-demo
 ├───xfdemo.py
+├───audiocutter.py
 ├───requirements.txt
-├───audio.mp3
-├───keywords.txt
-└───config.json
+├───readme.txt
+├───readme-cn.txt
+├───+example.m4a
+├───+keywords.txt
+└───+config.json
 ```
 
 ### Step 5: Run it! You can pass the audio name as arguments
 
-Args: -f: required, file to be converted,
-      -u: optional, use keyword list or not, y:Yes, n:No, default: No
+Args: 
+- -f: required, file to be converted, both realtive path and absolute path are supported
+- -u: optional, use keyword list or not, y:Yes, n:No, default: No
+- -s: optional, time offset in ms, starttime of this clip, used to correct lrc timetags. default: 0
+
+like this:
 ```
-me@host:~$ python xfdemo.py -f audio.mp3 -u y
+me@host:~$ python xfdemo.py -f example.m4a
+me@host:~$ python xfdemo.py -f /home/me/Audio/example.mp3
+me@host:~$ python xfdemo.py -f example.flac -u y
+me@host:~$ python xfdemo.py -f example.m4a -u y -s 100000
 ```
+
+### Step 6: Check for your results
+
+export dir will be created under the main dir, containing files below:
+
+- example.m4a.json: Raw data returned by API
+- example.m4a.txt: text generated
+- example.m4a.lrc: text with timetags
+
+## Develop guide
+
+### Structure
+
+tbd...
