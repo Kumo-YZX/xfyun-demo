@@ -60,6 +60,7 @@ class xfdemo(object):
         self.__slice_num = 1
         self.__time_offset = time_offset
         self.__keywords = ""
+        self.__language = ""
         stg_log(f"xfdemo loaded with filename: {self.__file_name}")
 
     # load addid & secret key
@@ -78,6 +79,15 @@ class xfdemo(object):
             keyword_str = fi.read()
         self.__keywords = keyword_str.replace('\n', ',')
         stg_log(f"keywords loaded: {str(self.__keywords)}, len: {str(len(self.__keywords))}")
+        return 0
+
+    # turn language argument into reuqest parameters 
+    def loadLanguage(self, language="zh"):
+        # input arguments -> request parameters
+        if language == "zh":
+            self.__language = "cn"
+        else:
+            self.__language = language
         return 0
 
     # check the file and calculate slice amount
@@ -109,7 +119,7 @@ class xfdemo(object):
     def reqPreTreat(self):
         stamp, sign = self.getTimeAndSign()
         headers = {"Content-Type": "application/x-www-form-urlencoded", "charset": "UTF-8"}
-        req_data = {"app_id": self.__appid, "signa": sign, "ts": stamp, 
+        req_data = {"app_id": self.__appid, "signa": sign, "ts": stamp, "language": self.__language,
                     "file_len": str(self.__file_size), "file_name": self.__file_path, "slice_num": self.__slice_num}
         # set keywords if avilable
         if len(self.__keywords) != 0:
@@ -127,6 +137,7 @@ class xfdemo(object):
         finally:
             pass
         stg_log(f"step 1: pre treat done")
+        stg_log(f"taskid: {str(self.__task_id)}")
         return 0
 
     # step 2: upload file in slices 
@@ -229,7 +240,7 @@ class xfdemo(object):
 
     # export content to json
     def writeFinalResultTemp(self):
-        with open(f"./export/{self.__file_name}.json", 'a') as fo:
+        with open(f"./export/{self.__file_name}.json", 'w') as fo:
             fo.write(self.__result)
         return 0
 
@@ -239,7 +250,7 @@ class xfdemo(object):
         with open(f"./export/{self.__file_name}.json", 'r') as fi:
             text_json = json.load(fi)
         
-        with open(f"./export/{self.__file_name}.txt", "a") as fo:
+        with open(f"./export/{self.__file_name}.txt", "w") as fo:
             # audio_result and keyword matchs is listed individually in keyword-porvided mode
             # same as below
             if "audio_result" in text_json:
@@ -258,7 +269,7 @@ class xfdemo(object):
         with open(f"./export/{self.__file_name}.json", 'r') as fi:
             text_json = json.load(fi)
         
-        with open(f"./export/{self.__file_name}.lrc", "a") as fo:
+        with open(f"./export/{self.__file_name}.lrc", "w") as fo:
             if "audio_result" in text_json:
                 sentence_list = json.loads(text_json["audio_result"])
             else:
@@ -281,6 +292,7 @@ class xfdemo(object):
 def loadArgs():
     import argparse
     parser = argparse.ArgumentParser()
+    # spaces in dir names/ file names are not supported
     parser.add_argument(
         '-f',
         '--filename',
@@ -288,6 +300,13 @@ def loadArgs():
         required=True,
         type=str,
         help="File to be converted"
+    )
+    parser.add_argument(
+        '-l',
+        '--language',
+        default='zh',
+        type=str,
+        help="Defalut language, in ISO 639-1 code"
     )
     parser.add_argument(
         '-u',
@@ -307,6 +326,7 @@ def loadArgs():
     return parser
 
 def main():
+    import re
     import sys
     import time
     args = loadArgs().parse_args()
@@ -321,10 +341,24 @@ def main():
     finally:
         stg_log(f"time offset: {str(time_offset)}")
 
-    myxf = xfdemo(args.filename, time_offset)
+    filename_input = args.filename.split(' ')[-1]
+
+    myxf = xfdemo(filename_input, time_offset)
     # myxf.checkTempdir("temp_audioclip")
     myxf.checkTempdir("export")
     myxf.loadConfig()
+
+    # read language arguments
+    # will error occur here?
+    lang_list = re.findall(r"[a-zA-Z]{2}", args.language)
+    lang_input = lang_list[0].lower()
+    if lang_input == "en":
+        myxf.loadLanguage("en")
+    elif lang_input == "zh":
+        myxf.loadLanguage("zh")
+    else:
+        myxf.loadLanguage("zh")
+    stg_log(f"language: {lang_input}")
 
     # addition space added to args in few times
     if args.usekeyword.find('y') >= 0:
