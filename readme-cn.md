@@ -77,13 +77,15 @@ xfyun-demo
 - -f：必须，被处理的**文件**路径。可以是相对路径也可以是绝对路径。
 - -u：可选，是否**使用**本地配置的关键词表。y：是，n：否。默认为否。
 - -s：可选，音频的**起始**位置偏移，单位为毫秒。只被用于在音频被拆分成多段处理时，确定其输出LRC文件时的起始时间。默认为0。
+- -l：可选，音频的处理**语言**。音频主要是什么语言构成就设置为此就行。语言代码以[ISO 639-1](https://www.loc.gov/standards/iso639-2/php/English_list.php)的二字代码为准，不区分大小写。目前支持中文（zh）/English(en)，默认为中文（zh）。~~其实也不会有别的语言了~~
 
 举例：
 ```
 me@host:~$ python xfdemo.py -f example.m4a
+me@host:~$ python xfdemo.py -f example.m4a -l zh
 me@host:~$ python xfdemo.py -f /home/me/Audio/example.mp3
 me@host:~$ python xfdemo.py -f example.flac -u y
-me@host:~$ python xfdemo.py -f example.m4a -u y -s 100000
+me@host:~$ python xfdemo.py -f example.m4a -u y -s 100000 -l en
 ```
 
 ### 第六步：查看结果
@@ -103,5 +105,13 @@ me@host:~$ python xfdemo.py -f example.m4a -u y -s 100000
 
 xfdemo的class主体包括预加载config和keywords、预检查、检查输出目录、5个步骤的请求、写json/txt/lrc文件几个函数。
 
-欢迎pr。
+### 多语言处理
+在做语言处理中，分了两步进行：先是对命令行参数（argv）的处理，默认zh，如果是在可用表中的，就同输入值，否则给zh。
+
+然后再进行语言代码->请求体所需的语言标识转换，例如，标准语言代码zh，转为请求体所需的“cn”。以预备以后有更多的此类转换出现。
+
+语言代码使用ISO 639-1的二字代码。
+
+以上。欢迎pr。
+
 tbd...

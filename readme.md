@@ -58,13 +58,15 @@ Args:
 - -f: required, file to be converted, both realtive path and absolute path are supported
 - -u: optional, use keyword list or not, y:Yes, n:No, default: No
 - -s: optional, time offset in ms, starttime of this clip, used to correct lrc timetags. default: 0
+- -l: language of this audio. In [ISO 639-1](https://www.loc.gov/standards/iso639-2/php/English_list.php) language code. Chinese(zh) and English(en) have already been supported now. default: zh
 
 like this:
 ```
 me@host:~$ python xfdemo.py -f example.m4a
+me@host:~$ python xfdemo.py -f example.m4a -l zh
 me@host:~$ python xfdemo.py -f /home/me/Audio/example.mp3
 me@host:~$ python xfdemo.py -f example.flac -u y
-me@host:~$ python xfdemo.py -f example.m4a -u y -s 100000
+me@host:~$ python xfdemo.py -f example.m4a -u y -s 100000 -l en
 ```
 
 ### Step 6: Check for your results

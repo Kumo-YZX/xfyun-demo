@@ -4,6 +4,7 @@
 *.flac
 *.log
 *.txt
+*.ini
 out.txt
 config.json
 temp_audioclip/
